@@ -1,6 +1,17 @@
+# include "defines.h"
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
+
+size_t	ft_strlen(const char *str)
+{
+	const char *s;
+
+	for (s = str; *s; ++s)
+		;
+
+	return (s - str);
+}
 
 void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
