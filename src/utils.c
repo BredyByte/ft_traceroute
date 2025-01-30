@@ -2,6 +2,36 @@
 # include <stdio.h>
 # include <stdlib.h>
 
+void	*ft_memcpy(void *dest, const void *src, size_t n)
+{
+	unsigned char	*d;
+	unsigned char	*s;
+	size_t			i;
+
+	d = (unsigned char *) dest;
+	s = (unsigned char *) src;
+	i = 0;
+
+	if (!n || (!dest && !src))
+		return dest;
+
+	for (; i < n; ++i)
+		d[i] = s[i];
+
+	return dest;
+}
+
+void	*ft_memset(void *s, int c, size_t n)
+{
+	char	*p = s;
+	size_t	i = 0;
+
+	for (; i < n; ++i)
+		p[i] = c;
+
+	return s;
+}
+
 void	exit_failure(char *str)
 {
 	if (!str)
