@@ -14,6 +14,7 @@ REMOVE = rm -rf
 SRC =	main.c \
 		utils.c \
 		args.c \
+		traceroute.c \
 
 OBJ = $(addprefix $(OBJ_PATH)/, $(SRC:.c=.o))
 

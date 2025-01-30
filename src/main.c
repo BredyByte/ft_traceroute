@@ -1,6 +1,7 @@
 # include "defines.h"
 # include "utils.h"
 # include "args.h"
+# include "traceroute.h"
 # include <sys/types.h>
 # include <unistd.h>
 
@@ -14,6 +15,8 @@ int	main(int argc, char **argv)
 	arg_parser(argc, argv);
 
 	print_gdata();
+
+	traceroute_lifecycle();
 
 	return 0;
 }
