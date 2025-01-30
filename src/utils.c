@@ -43,6 +43,16 @@ void	*ft_memset(void *s, int c, size_t n)
 	return s;
 }
 
+char	*ft_strncpy(char *dest, const char *src, size_t n)
+{
+	size_t i = 0;
+
+	for (; i < n; ++i)
+		dest[i] = src[i];
+
+	return dest;
+}
+
 void	exit_failure(char *str)
 {
 	if (!str)
