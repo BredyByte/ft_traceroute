@@ -1,6 +1,6 @@
 #ifndef ARGS_H
 # define ARGS_H
 
-void	argparser(int argc, char **argv);
+void	arg_parser(int argc, char **argv);
 
 #endif

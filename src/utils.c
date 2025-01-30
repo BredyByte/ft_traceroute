@@ -3,6 +3,8 @@
 # include <stdio.h>
 # include <stdlib.h>
 
+extern t_traceroute	g_data;
+
 size_t	ft_strlen(const char *str)
 {
 	const char *s;
@@ -71,6 +73,13 @@ void	print_usage(void)
 	printf("+\thost\t\tThe host to traceroute to.\n");
 	printf("\t\t\tIf --help is not used, it is assumed\n");
 	printf("\t\t\tthat host is always the first argument passed.\n");
+}
+
+void	print_gdata(void)
+{
+	printf("g_data struct params:\n");
+	printf("\thost_sa:\t%s\n", inet_ntoa(g_data.host_sa.sin_addr));
+	printf("\thostname:\t%s\n", (g_data.hostname != NULL) ? g_data.hostname : "null");
 }
 
 int	ft_strcmp(const char *s1, const char *s2)

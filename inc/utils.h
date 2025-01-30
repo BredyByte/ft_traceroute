@@ -14,5 +14,6 @@ size_t	ft_strlen(const char *str);
 
 /* output functions */
 void	print_usage(void);
+void	print_gdata(void);
 
 #endif

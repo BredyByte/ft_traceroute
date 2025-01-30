@@ -4,12 +4,16 @@
 # include <sys/types.h>
 # include <unistd.h>
 
+t_traceroute	g_data;
+
 int	main(int argc, char **argv)
 {
 	if (getuid() !=  0)
 		exit_failure("root privileges are required.");
 
-	argparser(argc, argv);
+	arg_parser(argc, argv);
+
+	print_gdata();
 
 	return 0;
 }
