@@ -62,6 +62,9 @@ void	exit_failure(char *str)
 	else
 		fprintf(stderr, "%s\n", str);
 
+	if (g_data.hostname != NULL)
+		free(g_data.hostname);
+
 	exit(EXIT_FAILURE);
 }
 
