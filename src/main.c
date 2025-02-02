@@ -12,6 +12,8 @@ int	main(int argc, char **argv)
 	if (getuid() !=  0)
 		exit_failure("root privileges are required.");
 
+	g_setdefs();
+
 	arg_parser(argc, argv);
 
 	//print_gdata();

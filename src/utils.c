@@ -65,6 +65,12 @@ void	exit_failure(char *str)
 	if (g_data.hostname != NULL)
 		free(g_data.hostname);
 
+	if (g_data.udp_sockfd)
+		close(g_data.udp_sockfd);
+
+	if (g_data.icmp_sockfd)
+		close(g_data.icmp_sockfd);
+
 	exit(EXIT_FAILURE);
 }
 
@@ -101,4 +107,14 @@ int	ft_strcmp(const char *s1, const char *s2)
 		return 0;
 
 	return (s1[i] - s2[i]);
+}
+
+void	g_setdefs(void)
+{
+	g_data.hostname = NULL;
+	ft_memset(&g_data.host_sa, 0, sizeof(struct sockaddr_in));
+	g_data.udp_sockfd = -1;
+	g_data.icmp_sockfd = -1;
+	g_data.udp_port = 0;
+	g_data.curttl = 0;
 }

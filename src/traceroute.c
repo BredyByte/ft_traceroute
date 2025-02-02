@@ -3,15 +3,18 @@
 # include <sys/socket.h>		/* socket(), setsockopt() */
 # include <sys/select.h>		/* select() */
 # include <netinet/ip_icmp.h>	/* struct icmphdr */
+# include <netinet/ip.h>		/* struct iphdr */
 # include <sys/time.h>
 # include <stdbool.h>
+# include <unistd.h>
 
-# define MAXTTL			30
+# define C_MAXTTL		30
 # define STARTPORT		33434
 # define PACKET_SIZE	32
 # define PROBES			3
 # define RECVBUF_SIZE	512
-# define PROBE_TIMEOUT 	1
+# define PROBE_SEC		1
+# define TIMEOUT_SEC 	5
 # define RUNNING		1
 # define STOPPED		0
 
@@ -40,7 +43,10 @@ void	traceroute_lifecycle(void)
 	icmp_sock_create(&g_data.icmp_sockfd);
 	udp_sock_create(&g_data.udp_sockfd);
 
-	while (g_data.curttl <= MAXTTL && is_running == RUNNING)
+	printf("traceroute to %s (%s), 30 hops max, 60 bytes packets\n",
+		g_data.hostname, inet_ntoa(g_data.host_sa.sin_addr));
+
+	while (g_data.curttl <= C_MAXTTL && is_running == RUNNING)
 	{
 		prep_udp_request(g_data.curttl);
 		send_udp_request(send_times);
@@ -50,6 +56,9 @@ void	traceroute_lifecycle(void)
 		g_data.udp_port++;
 		g_data.curttl++;
 	}
+
+	close(g_data.icmp_sockfd);
+	close(g_data.udp_sockfd);
 }
 
 /* create icmp sock for receive.
@@ -121,11 +130,11 @@ void	recv_icmp_responses(struct timeval send_times[PROBES])
 	double 				rtt;
 	struct icmphdr 		*icmp_hdr;
 
-	printf("%d  ", g_data.curttl);
+	printf(" %d  ", g_data.curttl);
 
     for (int i = 0; i < PROBES; ++i)
     {
-        timeout.tv_sec = PROBE_TIMEOUT;
+        timeout.tv_sec = PROBE_SEC;
         timeout.tv_usec = 0;
 
         FD_ZERO(&readfds);
