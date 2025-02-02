@@ -14,7 +14,7 @@ int	main(int argc, char **argv)
 
 	arg_parser(argc, argv);
 
-	print_gdata();
+	//print_gdata();
 
 	traceroute_lifecycle();
 
