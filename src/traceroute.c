@@ -28,6 +28,8 @@ void	udp_sock_create(int *sock);
 void	prep_udp_request(int ttl);
 void	send_udp_request(struct timeval	send_times[PROBES]);
 void	recv_icmp_responses(struct timeval	send_times[PROBES]);
+void	print_rtt(double rtt);
+void	print_ttl(int ttl);
 
 void	traceroute_lifecycle(void)
 {
@@ -129,8 +131,9 @@ void	recv_icmp_responses(struct timeval send_times[PROBES])
 	struct timeval 		recv_time;
 	double 				rtt;
 	struct icmphdr 		*icmp_hdr;
+	int					res;
 
-	printf(" %d  ", g_data.curttl);
+	print_ttl(g_data.curttl);
 
     for (int i = 0; i < PROBES; ++i)
     {
@@ -140,11 +143,18 @@ void	recv_icmp_responses(struct timeval send_times[PROBES])
         FD_ZERO(&readfds);
         FD_SET(g_data.icmp_sockfd, &readfds);
 
-        if (select(g_data.icmp_sockfd + 1, &readfds, NULL, NULL, &timeout) == 0)
+		res = select(g_data.icmp_sockfd + 1, &readfds, NULL, NULL, &timeout);
+
+		if (res == 0)
         {
-            printf("* ");
+			write(STDOUT_FILENO, "* ", 2);
             continue;
         }
+		else if (res < 0)
+		{
+			write(STDERR_FILENO, "select failed", 15);
+            continue;
+		}
 
         if (recvfrom(g_data.icmp_sockfd, buffer, sizeof(buffer), 0,
         		(struct sockaddr *)&from, &fromlen) < 0)
@@ -162,12 +172,26 @@ void	recv_icmp_responses(struct timeval send_times[PROBES])
         rtt = (recv_time.tv_sec - send_times[i].tv_sec) * 1000.0;
         rtt += (recv_time.tv_usec - send_times[i].tv_usec) / 1000.0;
 
-        printf("%.3f ms ", rtt);
+        print_rtt(rtt);
 
         icmp_hdr = (struct icmphdr *)(buffer + 20);
 		if (icmp_hdr->type == ICMP_DEST_UNREACH && icmp_hdr->code == ICMP_PORT_UNREACH)
 			is_running = STOPPED;
     }
 
-    printf("\n");
+    write(STDOUT_FILENO, "\n", 1);
+}
+
+void	print_ttl(int ttl)
+{
+    char buffer[16];
+    int len = snprintf(buffer, sizeof(buffer), " %d  ", ttl);
+    write(STDOUT_FILENO, buffer, len);
+}
+
+void	print_rtt(double rtt)
+{
+    char buffer[32];
+    int len = snprintf(buffer, sizeof(buffer), "%.3f ms   ", rtt);
+    write(STDOUT_FILENO, buffer, len);
 }
