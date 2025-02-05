@@ -1,9 +1,9 @@
 # include "defines.h"
 # include "utils.h"
-# include <sys/socket.h>		/* socket(), setsockopt() */
-# include <sys/select.h>		/* select() */
-# include <netinet/ip_icmp.h>	/* struct icmphdr */
-# include <netinet/ip.h>		/* struct iphdr */
+# include <sys/socket.h>			/* socket(), setsockopt() */
+# include <sys/select.h>			/* select() */
+# include <netinet/ip_icmp.h>		/* struct icmphdr */
+# include <netinet/ip.h>			/* struct iphdr */
 # include <sys/time.h>
 # include <stdbool.h>
 # include <unistd.h>
@@ -13,8 +13,7 @@
 # define PACKET_SIZE	32
 # define PROBES			3
 # define RECVBUF_SIZE	512
-# define PROBE_SEC		1
-# define TIMEOUT_SEC 	5
+# define TIMEOUT_MICSEC 100000		/* 1 sec - 1000000 microsec */
 # define RUNNING		1
 # define STOPPED		0
 
@@ -137,8 +136,8 @@ void	recv_icmp_responses(struct timeval send_times[PROBES])
 
     for (int i = 0; i < PROBES; ++i)
     {
-        timeout.tv_sec = PROBE_SEC;
-        timeout.tv_usec = 0;
+        timeout.tv_sec = 0;
+        timeout.tv_usec = TIMEOUT_MICSEC;
 
         FD_ZERO(&readfds);
         FD_SET(g_data.icmp_sockfd, &readfds);
@@ -172,9 +171,11 @@ void	recv_icmp_responses(struct timeval send_times[PROBES])
         rtt = (recv_time.tv_sec - send_times[i].tv_sec) * 1000.0;
         rtt += (recv_time.tv_usec - send_times[i].tv_usec) / 1000.0;
 
-        print_rtt(rtt);
-
         icmp_hdr = (struct icmphdr *)(buffer + 20);
+
+		if (icmp_hdr->type == ICMP_TIME_EXCEEDED || icmp_hdr->type == ICMP_DEST_UNREACH)
+            print_rtt(rtt);
+
 		if (icmp_hdr->type == ICMP_DEST_UNREACH && icmp_hdr->code == ICMP_PORT_UNREACH)
 			is_running = STOPPED;
     }
