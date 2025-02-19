@@ -33,7 +33,7 @@ void	flush_icmp_socket(void);
 
 void	traceroute_lifecycle(void)
 {
-	extern bool is_running;
+	extern bool		is_running;
 	struct timeval	send_times[PROBES];
 
 	ft_memset(send_times, 0, PROBES);
@@ -155,7 +155,7 @@ void	recv_icmp_responses(struct timeval send_times[PROBES])
         }
 		else if (res < 0)
 		{
-			write(STDERR_FILENO, "select failed", 15);
+			write(STDERR_FILENO, "select failed", 13);
             continue;
 		}
 
@@ -199,15 +199,17 @@ void	recv_icmp_responses(struct timeval send_times[PROBES])
 
 void	print_ttl(int ttl)
 {
-    char buffer[16];
-    int len = snprintf(buffer, sizeof(buffer), " %d  ", ttl);
+    char	buffer[16];
+
+	int len = snprintf(buffer, sizeof(buffer), " %d  ", ttl);
     write(STDOUT_FILENO, buffer, len);
 }
 
 void	print_rtt(double rtt)
 {
-    char buffer[32];
-    int len = snprintf(buffer, sizeof(buffer), "%.3f ms   ", rtt);
+    char	buffer[32];
+
+	int len = snprintf(buffer, sizeof(buffer), "%.3f ms   ", rtt);
     write(STDOUT_FILENO, buffer, len);
 }
 
